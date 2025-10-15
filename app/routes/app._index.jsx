@@ -1,15 +1,13 @@
 import { useEffect } from "react";
-import { useFetcher } from "react-router";
+import { useFetcher, useLoaderData } from "react-router";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { boundary } from "@shopify/shopify-app-react-router/server";
 import { authenticate } from "../shopify.server";
-import { useLoaderData } from "react-router";
 // import { json } from "@remix-run/node";
 
 export const loader = async ({ request }) => {
   const { admin } = await authenticate.admin(request);
   // =======================================
-
   const allCollectionsRes = await admin.graphql(`
     #graphql
         query GetCollections {
@@ -26,14 +24,73 @@ export const loader = async ({ request }) => {
         }
       }
     }`);
-
   const allCollections = await allCollectionsRes.json();
-
-  console.log(allCollections)
+  // console.log(allCollections)
   // =======================================
+
+  const DiscountCodes = await admin.graphql(`
+  {
+    codeDiscountNodes(first: 10) {
+      edges {
+        node {
+          id
+          codeDiscount {
+            ... on DiscountCodeBasic {
+              title
+              codes(first: 10) {
+                edges {
+                  node {
+                    code
+                    __typename
+                  }
+                }
+              }
+              summary
+              startsAt
+              endsAt
+              status
+            }
+            ... on DiscountCodeBxgy {
+              title
+              codes(first: 10) {
+                edges {
+                  node {
+                    code
+                  }
+                }
+              }
+              summary
+              startsAt
+              endsAt
+              status
+            }
+            ... on DiscountCodeFreeShipping {
+              title
+              codes(first: 10) {
+                edges {
+                  node {
+                    code
+                  }
+                }
+              }
+              summary
+              startsAt
+              endsAt
+              status
+            }
+          }
+        }
+      }
+    }
+  }
+`);
+
+  const allDiscountCodes = await DiscountCodes.json();
+
 
   return {
     collections: allCollections.data,
+    discountCodes: allDiscountCodes.data,
   };
 };
 
@@ -141,13 +198,23 @@ export default function Index() {
 
 
       <s-section heading="Custom Query Data">
-        <h1>Hi</h1>
+        <h1>Discount Code</h1>
         {/* <p>Collections: {JSON.stringify(loaderData, 2, null)}</p> */}
-        <p>Collections: {loaderData?.collections.collections.nodes[0].title}</p>
-        {/* {loaderData.data?.collections && (
-          <s-link>Response : </s-link>
-          <s-text></s-text>
-        )} */}
+        {/* <p>Collections: {loaderData?.collections.collections.nodes[0].title}</p> */}
+        {/* <p>Discount Codes: {JSON.stringify(loaderData.discountCodes)}</p> */}
+        {loaderData?.discountCodes?.codeDiscountNodes?.edges?.map(({ node }) => {
+          const id = node.id;
+          const title = node.codeDiscount.title;
+          const code = node.codeDiscount.codes.edges[0]?.node.code;
+
+          return (
+            <div key={id} style={{ padding: '10px', marginBottom: '10px', border: '1px solid #ccc', borderRadius: '7px' }}>
+              <s-paragraph><strong>ID:</strong> {id}</s-paragraph>
+              <s-paragraph><strong>Title:</strong> {title}</s-paragraph>
+              <s-paragraph><strong>Code:</strong> {code}</s-paragraph>
+            </div>
+          );
+        })}
       </s-section>
 
       <s-section heading="Congrats on creating a new Shopify app 🎉">
