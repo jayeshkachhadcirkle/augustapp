@@ -1,0 +1,80 @@
+{
+    "collections": {
+        "collections": {
+            "nodes": [
+                {
+                    "id": "gid://shopify/Collection/308078248071",
+                    "title": "Home page",
+                    "products": {
+                        "nodes": [
+                            {
+                                "id": "gid://shopify/Product/8239084798087",
+                                "title": "The Inventory Not Tracked Snowboard"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "gid://shopify/Collection/308078313607",
+                    "title": "Automated Collection",
+                    "products": {
+                        "nodes": [
+                            {
+                                "id": "gid://shopify/Product/8239085289607",
+                                "title": "The Multi-managed Snowboard"
+                            },
+                            {
+                                "id": "gid://shopify/Product/8239085256839",
+                                "title": "The Collection Snowboard: Liquid"
+                            },
+                            {
+                                "id": "gid://shopify/Product/8239085224071",
+                                "title": "The Multi-location Snowboard"
+                            },
+                            {
+                                "id": "gid://shopify/Product/8239085158535",
+                                "title": "The Hidden Snowboard"
+                            },
+                            {
+                                "id": "gid://shopify/Product/8239085125767",
+                                "title": "The Collection Snowboard: Hydrogen"
+                            },
+                            {
+                                "id": "gid://shopify/Product/8239085092999",
+                                "title": "The Archived Snowboard"
+                            },
+                            {
+                                "id": "gid://shopify/Product/8239085027463",
+                                "title": "The Compare at Price Snowboard"
+                            },
+                            {
+                                "id": "gid://shopify/Product/8239084929159",
+                                "title": "The Complete Snowboard"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "gid://shopify/Collection/308078346375",
+                    "title": "Hydrogen",
+                    "products": {
+                        "nodes": [
+                            {
+                                "id": "gid://shopify/Product/8239085256839",
+                                "title": "The Collection Snowboard: Liquid"
+                            },
+                            {
+                                "id": "gid://shopify/Product/8239085191303",
+                                "title": "The Collection Snowboard: Oxygen"
+                            },
+                            {
+                                "id": "gid://shopify/Product/8239085125767",
+                                "title": "The Collection Snowboard: Hydrogen"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}

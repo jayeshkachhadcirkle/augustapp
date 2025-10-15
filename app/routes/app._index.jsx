@@ -3,11 +3,38 @@ import { useFetcher } from "react-router";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { boundary } from "@shopify/shopify-app-react-router/server";
 import { authenticate } from "../shopify.server";
+import { useLoaderData } from "react-router";
+// import { json } from "@remix-run/node";
 
 export const loader = async ({ request }) => {
-  await authenticate.admin(request);
+  const { admin } = await authenticate.admin(request);
+  // =======================================
 
-  return null;
+  const allCollectionsRes = await admin.graphql(`
+    #graphql
+        query GetCollections {
+      collections(first: 10) {
+        nodes {
+          id
+          title
+          products(first: 100){
+            nodes{
+              id
+              title
+            }
+          }
+        }
+      }
+    }`);
+
+  const allCollections = await allCollectionsRes.json();
+
+  console.log(allCollections)
+  // =======================================
+
+  return {
+    collections: allCollections.data,
+  };
 };
 
 export const action = async ({ request }) => {
@@ -69,14 +96,30 @@ export const action = async ({ request }) => {
   );
   const variantResponseJson = await variantResponse.json();
 
+  // ===================================================
+
+  // ===================================================
+
+  // console.log("allCollections", allCollections);
+
   return {
     product: responseJson.data.productCreate.product,
     variant: variantResponseJson.data.productVariantsBulkUpdate.productVariants,
+    collections: allCollections.data,
   };
 };
 
+
+// function CustomQuery() {
+//   const data = useLoaderData();
+//   return <p>Collections: {data?.collections}</p>;
+// }
+
+
+
 export default function Index() {
   const fetcher = useFetcher();
+  const loaderData = useLoaderData();
   const shopify = useAppBridge();
   const isLoading =
     ["loading", "submitting"].includes(fetcher.state) &&
@@ -94,6 +137,18 @@ export default function Index() {
       <s-button slot="primary-action" onClick={generateProduct}>
         Generate a product
       </s-button>
+
+
+
+      <s-section heading="Custom Query Data">
+        <h1>Hi</h1>
+        {/* <p>Collections: {JSON.stringify(loaderData, 2, null)}</p> */}
+        <p>Collections: {loaderData?.collections.collections.nodes[0].title}</p>
+        {/* {loaderData.data?.collections && (
+          <s-link>Response : </s-link>
+          <s-text></s-text>
+        )} */}
+      </s-section>
 
       <s-section heading="Congrats on creating a new Shopify app 🎉">
         <s-paragraph>
@@ -179,6 +234,8 @@ export default function Index() {
         )}
       </s-section>
 
+
+
       <s-section slot="aside" heading="App template specs">
         <s-paragraph>
           <s-text>Framework: </s-text>
@@ -212,7 +269,7 @@ export default function Index() {
         </s-paragraph>
       </s-section>
 
-      <s-section slot="aside" heading="Next steps">
+      {/* <s-section slot="aside" heading="Next steps">
         <s-unordered-list>
           <s-list-item>
             Build an{" "}
@@ -233,7 +290,7 @@ export default function Index() {
             </s-link>
           </s-list-item>
         </s-unordered-list>
-      </s-section>
+      </s-section> */}
     </s-page>
   );
 }
