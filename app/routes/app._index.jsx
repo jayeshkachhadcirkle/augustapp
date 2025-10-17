@@ -10,7 +10,7 @@ import { Button } from '@shopify/polaris';
 
 export const loader = async ({ request }) => {
   const { admin } = await authenticate.admin(request);
-  // =======================================
+  // =========================================
   const allCollectionsRes = await admin.graphql(`
     #graphql
         query GetCollections {
