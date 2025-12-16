@@ -181,12 +181,6 @@ export default function Index() {
 
   }, [shopify, loaderData]);
 
-  // const [count, setCount] = useState(0);  
-
-  // const incrementCount = () => {
-  //   setCount(count + 1);   
-  // };
-
 
   return (
     <s-page heading="Shopify app template">
