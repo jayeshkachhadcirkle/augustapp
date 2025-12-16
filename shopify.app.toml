@@ -20,6 +20,23 @@ api_version = "2026-01"
   topics = [ "app/uninstalled" ]
   uri = "/webhooks/app/uninstalled"
 
+[[webhooks.subscriptions]]
+topics = ["discounts/create"]
+uri = "/webhooks/discounts"
+
+[[webhooks.subscriptions]]
+topics = ["discounts/update"]
+uri = "/webhooks/discounts"
+
+[[webhooks.subscriptions]]
+topics = ["discounts/delete"]
+uri = "/webhooks/discounts"
+
+[[webhooks.subscriptions]]
+topics = ["products/update"]
+uri = "/webhooks/products"
+
+
 [access.admin]
 direct_api_mode = "online"
 

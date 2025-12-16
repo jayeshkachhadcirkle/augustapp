@@ -89,7 +89,7 @@ export const loader = async ({ request }) => {
     `);
   const allDiscountCodes = await DiscountCodes.json();
 
-  console.log("All Dis Codes", JSON.stringify(allDiscountCodes, null, 2));
+  // console.log("All Dis Codes", JSON.stringify(allDiscountCodes, null, 2));
 
   const productsOnDiscount = await admin.graphql(
     `{
@@ -166,6 +166,59 @@ export const action = async ({ request }) => {
   };
 };
 
+async function registerWebhooks(admin, baseUrl) {
+  // 1. List existing webhooks
+  const res = await admin.graphql(`
+    {
+      webhookSubscriptions(first: 50) {
+        edges {
+          node {
+            id
+            topic
+            callbackUrl
+          }
+        }
+      }
+    }
+  `);
+
+  // 2. Delete existing webhooks (optional but recommended in dev)
+  for (const { node } of res.data.webhookSubscriptions.edges) {
+    await admin.graphql(`
+      mutation {
+        webhookSubscriptionDelete(id: "${node.id}") {
+          userErrors { message }
+        }
+      }
+    `);
+  }
+
+  // 3. Recreate webhooks with current tunnel URL
+  const hooks = [
+    { topic: "DISCOUNTS_CREATE", path: "/webhooks/discounts" },
+    { topic: "DISCOUNTS_UPDATE", path: "/webhooks/discounts" },
+    { topic: "DISCOUNTS_DELETE", path: "/webhooks/discounts" },
+    { topic: "PRODUCTS_UPDATE", path: "/webhooks/products" }
+  ];
+
+  for (const hook of hooks) {
+    await admin.graphql(`
+      mutation {
+        webhookSubscriptionCreate(
+          topic: ${hook.topic}
+          webhookSubscription: {
+            callbackUrl: "${baseUrl}${hook.path}"
+            format: JSON
+          }
+        ) {
+          userErrors { message }
+        }
+      }
+    `);
+  }
+}
+
+
 
 export default function Index() {
   const fetcher = useFetcher();
@@ -182,8 +235,10 @@ export default function Index() {
   }, [shopify, loaderData]);
 
 
+
   return (
     <s-page heading="Shopify app template">
+
 
       {/* <ClickCounter count={count} incrementCount={incrementCount} /> */}
 
